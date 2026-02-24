@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unified Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script type="text/javascript" src="/eel.js"></script>
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="ambient-glow" aria-hidden="true"></div>
+
+  <!-- SETUP SCREEN -->
+  <div id="screen-setup" class="screen active">
+    <div class="setup-wrapper">
+      <div class="logo-block">
+        <div class="logo-icon">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="22" stroke="var(--green)" stroke-width="2"/>
+            <circle cx="24" cy="24" r="10" fill="var(--green)" opacity="0.15"/>
+            <path d="M24 4 L24 44M4 24 L44 24" stroke="var(--green)" stroke-width="1" opacity="0.4"/>
+            <circle cx="24" cy="24" r="4" fill="var(--green)"/>
+          </svg>
+        </div>
+        <h1 class="logo-title">UNIFIED HUB</h1>
+        <p class="logo-subtitle">ESTABLISH YOUR IDENTITY</p>
+      </div>
+
+      <div class="card setup-card">
+        <div class="card-tag">PROFILE INIT</div>
+        <div class="avatar-upload-zone" id="avatarZone" title="Click to choose avatar">
+          <div class="avatar-ring">
+            <img id="avatarPreview" src="" alt="" class="avatar-img hidden" />
+            <div class="avatar-placeholder" id="avatarPlaceholder">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+          </div>
+          <span class="avatar-label">SELECT AVATAR</span>
+        </div>
+        <div class="form-group"><label class="form-label">CALLSIGN</label><input type="text" id="setupNick" class="form-input" placeholder="Enter your nickname" maxlength="24" /></div>
+        <div class="form-group"><label class="form-label">BIO SIGNATURE</label><textarea id="setupBio" class="form-input form-textarea" placeholder="Hey there! I am using Unified Hub." maxlength="120"></textarea></div>
+        <button class="btn btn-primary btn-full" id="setupSaveBtn"><span class="btn-icon">▶</span> DEPLOY PROFILE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOME SCREEN -->
+  <div id="screen-home" class="screen">
+    <div id="serverBanner" class="hidden" style="background:var(--green-dim); padding:12px 20px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--green);">
+        <span style="font-family:var(--font-display); font-size:0.7rem; color:var(--green-bright); letter-spacing:0.1em;">🟢 SERVER RUNNING IN BACKGROUND</span>
+        <div style="display:flex; gap:10px;">
+            <button id="reenterBtn" class="btn btn-primary" style="padding:8px 16px; font-size:0.5rem; color:black;">RE-ENTER ROOM</button>
+            <button id="shutdownBtn" class="btn btn-outline" style="padding:8px 16px; font-size:0.5rem; color:var(--red); border-color:var(--red);">SHUTDOWN</button>
+        </div>
+    </div>
+
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-logo"><svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="22" stroke="var(--green)" stroke-width="2"/><circle cx="24" cy="24" r="4" fill="var(--green)"/></svg></div>
+        <span class="topbar-title">UNIFIED HUB</span>
+      </div>
+      <nav class="topbar-nav">
+        <button class="nav-tab active" data-panel="panel-rooms">ROOMS</button>
+        <button class="nav-tab" data-panel="panel-profile">PROFILE</button>
+      </nav>
+      <div class="topbar-right">
+        <div class="topbar-user" id="topbarUser">
+          <div class="topbar-avatar" id="topbarAvatar">?</div>
+          <span class="topbar-nick" id="topbarNick">User</span>
+          <div class="status-dot"></div>
+        </div>
+      </div>
+    </header>
+
+    <main class="home-body">
+      <div class="panel active" id="panel-rooms">
+        <div class="panel-grid">
+          
+          <div class="card action-card">
+            <div class="card-tag">HOST</div>
+            <div class="action-icon host-icon">
+              <svg viewBox="0 0 48 48" fill="none"><rect x="10" y="10" width="28" height="28" rx="3" stroke="var(--green)" stroke-width="2"/><circle cx="24" cy="24" r="5" fill="var(--green)"/><path d="M24 10 L24 14M24 34 L24 38M10 24 L14 24M34 24 L38 24" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <h2 class="action-title">CREATE ROOM</h2>
+            <div class="form-group"><label class="form-label">ROOM NAME</label><input type="text" id="hostRoomName" class="form-input" placeholder="e.g. Alpha Squad" maxlength="30" /></div>
+            <div class="form-group"><label class="form-label">PORT</label><input type="number" id="hostPort" class="form-input" placeholder="5555" value="5555" min="1024" max="65535" /></div>
+            <div class="form-group"><label class="form-label">PASSWORD <span class="label-opt">(optional)</span></label><input type="password" id="hostPassword" class="form-input" placeholder="Leave blank for open room" /></div>
+            <button class="btn btn-primary btn-full" id="hostBtn"><span class="btn-icon">⬡</span> INITIATE HOST</button>
+          </div>
+
+          <div class="card action-card">
+            <div class="card-tag">JOIN</div>
+            <div class="action-icon join-icon">
+              <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="14" stroke="var(--green)" stroke-width="2"/><path d="M20 24 L28 24M28 24 L24 20M28 24 L24 28" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <h2 class="action-title">JOIN ROOM</h2>
+            <div class="form-group"><label class="form-label">HOST IP</label><input type="text" id="joinIP" class="form-input" placeholder="192.168.1.x" /></div>
+            <div class="form-group"><label class="form-label">PORT</label><input type="number" id="joinPort" class="form-input" placeholder="5555" value="5555" min="1024" max="65535" /></div>
+            <div class="form-group"><label class="form-label">PASSWORD</label><input type="password" id="joinPassword" class="form-input" placeholder="Enter room password" /></div>
+            <button class="btn btn-outline btn-full" id="joinBtn"><span class="btn-icon">→</span> REQUEST ACCESS</button>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:16px;">
+              <div class="card info-card" style="flex:1;">
+                <div class="card-tag">MY HOSTED CHANNELS</div>
+                <div id="hostedList" class="recent-list"><p class="empty-hint">No hosted channels</p></div>
+              </div>
+              <div class="card info-card" style="flex:1;">
+                <div class="card-tag">SAVED VOICE CHANNELS</div>
+                <div id="savedList" class="recent-list"><p class="empty-hint">No saved channels</p></div>
+              </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-profile">
+        <div class="profile-edit-wrap">
+          <div class="card profile-edit-card">
+            <div class="card-tag">IDENTITY</div>
+            <div class="profile-edit-avatar-wrap">
+              <div class="avatar-upload-zone small" id="profileAvatarZone" title="Click to change avatar">
+                <div class="avatar-ring">
+                  <img id="profileAvatarPreview" src="" alt="" class="avatar-img hidden" />
+                  <div class="avatar-placeholder" id="profileAvatarPlaceholder"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+                </div>
+                <span class="avatar-label">CHANGE</span>
+              </div>
+              <div class="profile-uid-block"><div class="uid-label">USER ID</div><div class="uid-val" id="displayUID">—</div></div>
+            </div>
+            <div class="form-group"><label class="form-label">CALLSIGN</label><input type="text" id="profileNick" class="form-input" maxlength="24" /></div>
+            <div class="form-group"><label class="form-label">BIO SIGNATURE</label><textarea id="profileBio" class="form-input form-textarea" maxlength="120"></textarea></div>
+            <button class="btn btn-primary btn-full" id="profileSaveBtn"><span class="btn-icon">✔</span> SAVE IDENTITY</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+    <div id="homeToast" class="toast hidden"></div>
+  </div>
+
+  <!-- CHAT ROOM SCREEN -->
+  <div id="screen-room" class="screen">
+    <header class="room-topbar">
+      <div class="room-topbar-left">
+        <button class="icon-btn" id="leaveRoomBtn" title="Leave Room"><svg viewBox="0 0 24 24" fill="none"><path d="M15 12H3M3 12 L7 8M3 12 L7 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 4H19a2 2 0 012 2v12a2 2 0 01-2 2H9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+        <div class="room-info">
+          <span class="room-name-display" id="roomNameDisplay">—</span>
+          <span class="room-code-display">CODE: <strong id="roomCodeDisplay">—</strong></span>
+        </div>
+      </div>
+      <div class="room-topbar-center">
+        <div class="connection-status" id="connectionStatus"><span class="status-pulse"></span><span id="connectionLabel">CONNECTING…</span></div>
+      </div>
+      <div class="room-topbar-right">
+        <button class="media-btn" id="roomSettingsBtn" title="Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        </button>
+        <button class="media-btn" id="micBtn" title="Toggle Mic">
+          <svg class="icon-mic" viewBox="0 0 24 24" fill="none"><rect x="9" y="2" width="6" height="12" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M5 10a7 7 0 0014 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 19v3M9 22h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <svg class="icon-mic-off hidden" viewBox="0 0 24 24" fill="none"><line x1="2" y1="2" x2="22" y2="22" stroke="var(--red)" stroke-width="2"/><rect x="9" y="2" width="6" height="12" rx="3" stroke="var(--red)" stroke-width="1.8"/><path d="M5 10a7 7 0 0014 0" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+        <button class="media-btn" id="deafenBtn" title="Toggle Deafen">
+          <svg class="icon-deaf" viewBox="0 0 24 24" fill="none"><path d="M3 10a9 9 0 0118 0v4a4 4 0 01-4 4H13M3 10v4a4 4 0 004 4v1a2 2 0 004 0v-1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <svg class="icon-deaf-off hidden" viewBox="0 0 24 24" fill="none"><line x1="2" y1="2" x2="22" y2="22" stroke="var(--red)" stroke-width="2"/><path d="M3 10a9 9 0 0118 0v4a4 4 0 01-4 4H13M3 10v4a4 4 0 004 4v1a2 2 0 004 0v-1" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+        <button class="media-btn" id="liveBtn" title="Toggle Screen Share">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 20h8M12 18v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="11" r="2.5" fill="currentColor"/></svg>
+        </button>
+        <button class="media-btn host-only hidden" id="adminToggleBtn" title="Admin Panel"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l8 4.5v5c0 4-3.5 7.5-8 9-4.5-1.5-8-5-8-9v-5z" stroke="var(--green)" stroke-width="1.8"/><path d="M9 12l2 2 4-4" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </header>
+
+    <div class="room-body">
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-heading"><span>PARTICIPANTS</span><span class="count-badge" id="participantCount">0</span></div>
+          <div id="userList" class="user-list"></div>
+        </div>
+      </aside>
+
+      <section class="chat-section">
+        <div class="video-section hidden" id="videoSection" style="background:#000; border-bottom:1px solid var(--border); position:relative; display:flex; flex-direction:column; max-height: 50%;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 16px; background:var(--bg-panel); border-bottom:1px solid var(--border);">
+                <span id="watchingLabel" style="font-family:var(--font-display); font-size:0.6rem; font-weight:700; color:var(--red); letter-spacing:0.15em;">WATCHING STREAM</span>
+                <button id="closeStreamBtn" class="btn btn-outline" style="padding:4px 10px; font-size:0.5rem; letter-spacing:0.1em;">STOP WATCHING</button>
+            </div>
+            <img id="videoCanvas" src="" style="width:100%; height:100%; object-fit:contain; background:black;" />
+        </div>
+        
+        <div class="chat-messages" id="chatMessages"></div>
+
+        <div class="chat-input-bar">
+          <button class="attach-btn" id="attachBtn" title="Attach file"><svg viewBox="0 0 24 24" fill="none"><path d="M21 12l-8 8a5 5 0 01-7-7L15 4a3 3 0 014 4L10 17a1 1 0 01-1-1l8-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+          <span id="uploadStatus" style="font-size:0.65rem; color:var(--amber); margin-left:10px; font-family:var(--font-display); letter-spacing:0.1em; display:none;"></span>
+          <input type="text" id="chatInput" class="chat-text-input" placeholder="Transmit message…" autocomplete="off" />
+          <button class="send-btn" id="sendBtn"><svg viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></button>
+        </div>
+      </section>
+
+      <aside class="admin-panel hidden" id="adminPanel">
+        <div class="sidebar-section">
+          <div class="sidebar-heading"><span>ADMIN CONTROL</span></div>
+          <div class="admin-info">
+            <div class="admin-row"><span class="admin-key">ROOM CODE</span><span class="admin-val" id="adminRoomCode">—</span></div>
+            <div class="admin-row"><span class="admin-key">HOST PORT</span><span class="admin-val" id="adminPort">—</span></div>
+            <div class="admin-row"><span class="admin-key">STATUS</span><span class="admin-val green-text">ACTIVE HOST</span></div>
+          </div>
+          <div class="sidebar-heading" style="margin-top:16px"><span>BAN LIST</span></div>
+          <div id="banList" class="ban-list"><p class="empty-hint">No bans active</p></div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Modals -->
+    <div class="context-menu hidden" id="contextMenu">
+      <div class="context-item" id="ctx-view-profile">View Profile</div>
+      <div class="context-item host-only" id="ctx-make-secondary">Make Secondary Host</div>
+      <div class="context-item host-only danger" id="ctx-ban">Ban User</div>
+    </div>
+
+    <div class="modal-overlay hidden" id="inRoomSettingsModal">
+      <div class="modal-box" style="width: 380px;">
+        <div class="modal-tag">ROOM SETTINGS</div>
+        <button class="modal-close" id="settingsCloseBtn">✕</button>
+
+        <div class="profile-edit-avatar-wrap" style="justify-content: center; margin-bottom: 20px; border:none; padding-bottom:0;">
+            <div class="avatar-upload-zone small" id="settingsAvatarZone" title="Click to change avatar">
+                <div class="avatar-ring" style="width: 80px; height: 80px;">
+                    <img id="settingsAvatarPreview" src="" alt="" class="avatar-img hidden" />
+                    <div class="avatar-placeholder" id="settingsAvatarPlaceholder">
+                        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                    </div>
+                </div>
+                <span class="avatar-label">CHANGE</span>
+            </div>
+        </div>
+
+        <div class="form-group"><label class="form-label">CALLSIGN</label><input type="text" id="settingsNick" class="form-input" maxlength="24" /></div>
+        <div class="form-group"><label class="form-label">BIO SIGNATURE</label><textarea id="settingsBio" class="form-input form-textarea" maxlength="120"></textarea></div>
+
+        <div class="form-group" style="margin-top:10px;"><label class="form-label">AUDIO INPUT</label><select class="form-input" disabled style="opacity: 0.5;"><option>Default Microphone</option></select></div>
+        <div class="form-group"><label class="form-label">AUDIO OUTPUT</label><select class="form-input" disabled style="opacity: 0.5;"><option>Default Speaker</option></select></div>
+
+        <button class="btn btn-primary btn-full" id="settingsSaveBtn" style="margin-top: 15px;"><span class="btn-icon">✔</span> APPLY SETTINGS</button>
+      </div>
+    </div>
+
+    <div class="modal-overlay hidden" id="streamModal">
+      <div class="modal-box" style="width: 380px;">
+        <div class="modal-tag">STREAM CONFIG</div>
+        <button class="modal-close" id="streamModalClose">✕</button>
+        <div class="form-group"><label class="form-label">CAPTURE SOURCE</label><select id="streamSource" class="form-input"></select></div>
+        <div class="form-group"><label class="form-label">RESOLUTION</label><select id="streamRes" class="form-input"><option value="1080p">1080p (Highest Quality)</option><option value="720p" selected>720p (Balanced)</option><option value="480p">480p (Performance)</option></select></div>
+        <div class="form-group"><label class="form-label">FRAMERATE</label><select id="streamFps" class="form-input"><option value="60">60 FPS</option><option value="30" selected>30 FPS</option><option value="15">15 FPS</option><option value="5">5 FPS</option></select></div>
+        <button class="btn btn-primary btn-full" id="streamStartConfirmBtn" style="margin-top: 16px;"><span class="btn-icon">▶</span> INITIATE STREAM</button>
+      </div>
+    </div>
+
+    <div class="modal-overlay hidden" id="hostDisconnectModal">
+      <div class="modal-box" style="width: 380px;">
+        <div class="modal-tag">HOST OPTIONS</div>
+        <button class="modal-close" id="hostDisconnectClose">✕</button>
+        <p style="margin-bottom: 20px; font-size: 0.85rem; line-height: 1.4; color: var(--text-secondary);">Do you want to completely shutdown the server, or leave it running in the background?</p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <button class="btn btn-primary" style="background: var(--red); color: white; box-shadow: 0 0 15px rgba(255,0,0,0.3);" id="btnRealShutdown">🛑 SHUTDOWN SERVER</button>
+          <button class="btn btn-outline" style="border-color: var(--amber); color: var(--amber);" id="btnMigrateHost">🔄 MIGRATE HOST</button>
+          <button class="btn btn-outline" style="border-color: var(--green); color: var(--green);" id="btnBgLobby">🚪 LEAVE TO LOBBY (RUN IN BG)</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay hidden" id="secHostPromptModal">
+      <div class="modal-box" style="width: 380px;">
+        <div class="modal-tag">MIGRATION REQUEST</div>
+        <p style="margin-bottom: 10px; font-size: 0.9rem; font-weight: bold; color: var(--text-primary);">The Admin requested you to be Secondary Host.</p>
+        <p style="margin-bottom: 20px; font-size: 0.8rem; line-height: 1.4; color: var(--text-secondary);">If the Admin disconnects, you will keep the room alive. (Requires port forwarding enabled!)</p>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-primary" style="flex: 1;" id="btnAcceptSecHost">ACCEPT</button>
+          <button class="btn btn-outline" style="flex: 1; border-color: var(--red); color: var(--red);" id="btnDeclineSecHost">DECLINE</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay hidden" id="profileModal">
+      <div class="modal-box">
+        <div class="modal-tag">PLAYER CARD</div>
+        <button class="modal-close" id="profileModalClose">✕</button>
+        <div class="modal-avatar-wrap">
+          <div class="modal-avatar" id="modalAvatar">?</div>
+          <div class="modal-user-info"><div class="modal-nick" id="modalNick">—</div><div class="modal-uid" id="modalUID">—</div></div>
+        </div>
+        <div class="modal-bio" id="modalBio">—</div>
+        <div class="modal-status"><span class="status-dot"></span><span id="modalStatus">ONLINE</span></div>
+      </div>
+    </div>
+
+    <div id="roomToast" class="toast hidden"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
